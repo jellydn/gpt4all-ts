@@ -21,6 +21,7 @@ yarn install
 ## Example usage
 
 ```sh
+yarn build
 yarn dev
 ```
 

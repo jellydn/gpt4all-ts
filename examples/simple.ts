@@ -1,4 +1,4 @@
-import { GPT4All } from "../src/gpt4all";
+import { GPT4All } from "../dist/gpt4all.js";
 
 const main = async () => {
   // Instantiate GPT4All with default or custom settings

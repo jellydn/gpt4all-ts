@@ -2,6 +2,7 @@
   "name": "gpt4all-ts-client",
   "version": "0.1.1-0",
   "private": false,
+  "type": "module",
   "description": "GPT4All Typescript Client",
   "keywords": [
     "gpt4all"
@@ -18,7 +19,7 @@
     "/dist"
   ],
   "scripts": {
-    "build": "tsup src --dts --clean",
+    "build": "tsup src/gpt4all.ts --format esm --dts --clean",
     "dev": "DEBUG=* tsx examples/simple.ts",
     "pkg-check": "package-check",
     "test": "echo \"Error: no test specified\" && exit 1"
