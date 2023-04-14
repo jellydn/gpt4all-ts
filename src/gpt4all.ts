@@ -2,11 +2,47 @@ import { exec, spawn } from "child_process";
 import { promisify } from "util";
 import * as fs from "fs";
 import * as os from "os";
-import axios from "axios";
-import * as ProgressBar from "progress";
+import cliProgress from "cli-progress";
+import got from "got";
 import debug from "debug";
+import { URL } from "url";
 
 const debugging = debug("gpt4all");
+
+const downloadFile = async (
+  url: string | URL | undefined,
+  path: fs.PathLike
+) => {
+  debugging(`Downloading ${url} to ${path}`);
+  const stream = fs.createWriteStream(path);
+  const progressBar = new cliProgress.SingleBar(
+    {},
+    cliProgress.Presets.shades_classic
+  );
+  progressBar.start(100, 0);
+  const response = got.stream(url);
+  let totalLength = 0;
+  let downloadedLength = 0;
+
+  response.on("downloadProgress", (progress) => {
+    downloadedLength = progress.transferred;
+    totalLength = progress.total;
+    if (totalLength === 0) return;
+
+    const progressPercent = (downloadedLength / totalLength) * 100;
+    progressBar.update(progressPercent);
+  });
+
+  response.pipe(stream);
+
+  return new Promise((resolve, reject) => {
+    stream.on("finish", () => {
+      progressBar.stop();
+      resolve(url);
+    });
+    stream.on("error", reject);
+  });
+};
 
 export class GPT4All {
   private bot: ReturnType<typeof spawn> | null = null;
@@ -17,7 +53,6 @@ export class GPT4All {
 
   constructor(
     model: string = "gpt4all-lora-quantized",
-    forceDownload: boolean = false,
     decoderConfig: Record<string, any> = {}
   ) {
     this.model = model;
@@ -43,20 +78,19 @@ Intel Mac/OSX: cd chat;./gpt4all-lora-quantized-OSX-intel
   }
 
   async init(forceDownload: boolean = false): Promise<void> {
-    const downloadPromises: Promise<void>[] = [];
+    debugging("Initializing GPT4All");
 
     if (forceDownload || !fs.existsSync(this.executablePath)) {
-      downloadPromises.push(this.downloadExecutable());
+      await this.downloadExecutable();
     }
 
     if (forceDownload || !fs.existsSync(this.modelPath)) {
-      downloadPromises.push(this.downloadModel());
+      await this.downloadModel();
     }
-
-    await Promise.all(downloadPromises);
   }
 
   public async open(): Promise<void> {
+    debugging("Opening GPT4All");
     if (this.bot !== null) {
       this.close();
     }
@@ -81,13 +115,15 @@ Intel Mac/OSX: cd chat;./gpt4all-lora-quantized-OSX-intel
   }
 
   public close(): void {
+    debugging("Closing GPT4All");
     if (this.bot !== null) {
       this.bot.kill();
       this.bot = null;
     }
   }
 
-  private async downloadExecutable(): Promise<void> {
+  private async downloadExecutable() {
+    debugging("Downloading GPT4All executable");
     let upstream: string;
     const platform = os.platform();
 
@@ -113,56 +149,24 @@ Intel Mac/OSX: cd chat;./gpt4all-lora-quantized-OSX-intel
       );
     }
 
-    await this.downloadFile(upstream, this.executablePath);
+    await downloadFile(upstream, this.executablePath);
 
-    await fs.chmod(this.executablePath, 0o755, (err) => {
+    fs.chmod(this.executablePath, 0o755, (err) => {
       if (err) {
         throw err;
       }
     });
-
-    debugging(`File downloaded successfully to ${this.executablePath}`);
   }
 
-  private async downloadModel(): Promise<void> {
+  private async downloadModel() {
+    debugging("Downloading GPT4All model");
     const modelUrl = `https://the-eye.eu/public/AI/models/nomic-ai/gpt4all/${this.model}.bin`;
 
-    await this.downloadFile(modelUrl, this.modelPath);
-
-    debugging(`File downloaded successfully to ${this.modelPath}`);
-  }
-
-  private async downloadFile(url: string, destination: string): Promise<void> {
-    const { data, headers } = await axios.get(url, { responseType: "stream" });
-    const totalSize = parseInt(headers["content-length"], 10);
-    const progressBar = new ProgressBar("[:bar] :percent :etas", {
-      complete: "=",
-      incomplete: " ",
-      width: 20,
-      total: totalSize,
-    });
-    const dir = new URL(`file://${os.homedir()}/.nomic/`);
-    await fs.mkdir(dir, { recursive: true }, (err) => {
-      if (err) {
-        throw err;
-      }
-    });
-
-    const writer = fs.createWriteStream(destination);
-
-    data.on("data", (chunk: any) => {
-      progressBar.tick(chunk.length);
-    });
-
-    data.pipe(writer);
-
-    return new Promise((resolve, reject) => {
-      writer.on("finish", resolve);
-      writer.on("error", reject);
-    });
+    return downloadFile(modelUrl, this.modelPath);
   }
 
   public prompt(prompt: string): Promise<string> {
+    debugging("Prompting GPT4All with:", prompt);
     if (this.bot === null) {
       throw new Error("Bot is not initialized.");
     }
