@@ -1,5 +1,5 @@
 {
-  "name": "@jellydn/gpt4all",
+  "name": "gpt4all-ts-client",
   "version": "0.0.1",
   "private": false,
   "description": "GPT4All Typescript Client",
