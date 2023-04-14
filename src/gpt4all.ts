@@ -158,6 +158,7 @@ Intel Mac/OSX: cd chat;./gpt4all-lora-quantized-OSX-intel
     });
   }
 
+  // TODO: support GPT4All community models
   private async downloadModel() {
     debugging("Downloading GPT4All model");
     const modelUrl = `https://the-eye.eu/public/AI/models/nomic-ai/gpt4all/${this.model}.bin`;
@@ -183,6 +184,7 @@ Intel Mac/OSX: cd chat;./gpt4all-lora-quantized-OSX-intel
           clearTimeout(timeoutId);
         }
 
+        // TODO: handle the case where the response is longer than 4 seconds
         if (text.includes(">")) {
           debugging("Response starts with >, end of message - Resolving..."); // Debug log: Indicate that the response ends with "\\f"
           terminateAndResolve(response); // Remove the trailing "\f" delimiter
