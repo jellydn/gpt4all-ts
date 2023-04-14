@@ -11,7 +11,7 @@
     "url": "https://github.com/jellydn/gpt4all-ts"
   },
   "license": "MIT",
-  "author": "Conner Swann <conner@intuitivesystems.xyz>",
+  "author": "Dung Huynh",
   "main": "dist/gpt4all.js",
   "types": "dist/gpt4all.d.ts",
   "scripts": {
