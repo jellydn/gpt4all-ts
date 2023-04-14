@@ -14,6 +14,9 @@
   "author": "Dung Huynh",
   "main": "dist/gpt4all.js",
   "types": "dist/gpt4all.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "build": "tsup src --dts --clean",
     "dev": "DEBUG=* tsx examples/simple.ts",
@@ -33,5 +36,8 @@
     "tsup": "^6.7.0",
     "tsx": "^3.12.6",
     "typescript": "^5.0.4"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
