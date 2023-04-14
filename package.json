@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsup src",
     "dev": "DEBUG=* tsx examples/simple.ts",
+    "pkg-check": "package-check",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "os": "^0.1.2"
   },
   "devDependencies": {
+    "@skypack/package-check": "^0.2.2",
     "@types/cli-progress": "^3.11.0",
     "@types/debug": "^4.1.7",
     "tsup": "^6.7.0",
