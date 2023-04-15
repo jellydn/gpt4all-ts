@@ -5,7 +5,8 @@ const main = async () => {
   const gpt4all = new GPT4All("gpt4all-lora-unfiltered-quantized"); // Default is 'gpt4all-lora-quantized' model
 
   // Initialize and download missing files
-  await gpt4all.init(true);
+  const forceDownload = false;
+  await gpt4all.init(forceDownload);
 
   // Open the connection with the model
   await gpt4all.open();
