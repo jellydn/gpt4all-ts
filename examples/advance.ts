@@ -11,14 +11,13 @@ const main = async () => {
   // Open the connection with the model
   await gpt4all.open();
   // Generate a response using a prompt
-  const prompt =
-    "Tell me about how Open Access to AI is going to help humanity.";
+  const prompt = "How to implement buble sort with Javascript";
   const response = await gpt4all.prompt(prompt);
   console.log(`Prompt: ${prompt}`);
   console.log(`Response: ${response}`);
 
-  const prompt2 =
-    "Explain to a five year old why AI is nothing to be afraid of.";
+  const prompt2 = "Rewrite above code in C++ and explain how it works";
+
   const response2 = await gpt4all.prompt(prompt2);
   console.log(`Prompt: ${prompt2}`);
   console.log(`Response: ${response2}`);
