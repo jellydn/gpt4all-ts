@@ -73,7 +73,10 @@ Intel Mac/OSX: cd chat;./gpt4all-lora-quantized-OSX-intel
                 gpt4all-lora-unfiltered-quantized`);
     }
 
-    this.executablePath = `${os.homedir()}/.nomic/gpt4all`;
+    this.executablePath =
+      os.platform() === "win32"
+        ? `${os.homedir()}/.nomic/gpt4all.exe`
+        : `${os.homedir()}/.nomic/gpt4all`;
     this.modelPath = `${os.homedir()}/.nomic/${model}.bin`;
   }
 
