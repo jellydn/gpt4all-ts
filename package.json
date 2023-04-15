@@ -1,6 +1,6 @@
 {
   "name": "gpt4all-ts-client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "type": "module",
   "description": "GPT4All Typescript Client",
